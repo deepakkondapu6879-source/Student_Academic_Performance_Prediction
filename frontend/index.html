@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Student Academic Performance Prediction</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B1120;--s2:#111827;--card:#172033;--ac:#6366F1;--ac2:#06B6D4;--ok:#22C55E;--warn:#F59E0B;--err:#EF4444;--tx:#F8FAFC;--dim:#94A3B8;--bd:#293548;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:inherit;margin:0}
+body{background:radial-gradient(900px 400px at 15% -10%,rgba(99,102,241,.16),transparent),var(--bg);color:var(--tx);font:400 15px/1.55 Inter,system-ui,sans-serif;min-height:100vh}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 48px}
+h1{font:700 32px/1.2 Poppins,sans-serif;letter-spacing:-.5px}h1 span{color:var(--ac2)}
+h2{font:600 18px Inter,sans-serif;margin-bottom:12px}
+.by{color:var(--dim);font-size:13px;margin:6px 0 20px}
+.tabs{display:flex;gap:6px;background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:4px;margin-bottom:16px;overflow-x:auto}
+.tab{flex:1;white-space:nowrap;font:600 14px Inter;color:var(--dim);background:none;border:0;border-radius:9px;padding:10px 16px;cursor:pointer;transition:.2s}
+.tab:hover{color:var(--tx)}.tab[aria-selected=true]{background:var(--ac);color:#fff}
+button:focus-visible,input:focus-visible,label:focus-within{outline:2px solid var(--ac2);outline-offset:2px}
+.panel{display:none;animation:up .35s ease both}.panel.on{display:block}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.btn{font:600 15px Inter;border:1px solid var(--bd);background:var(--s2);color:var(--tx);border-radius:10px;padding:10px 16px;cursor:pointer;transition:.15s;display:inline-block}
+.btn:hover{border-color:var(--ac2);transform:translateY(-1px)}.btn:active{transform:none}
+.btn.pri{background:linear-gradient(135deg,#6366F1,#4F46E5);border:0;box-shadow:0 4px 14px rgba(99,102,241,.35)}
+.btn:disabled{opacity:.5;cursor:wait}
+.dim{color:var(--dim);font-size:13px}
+.stat{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.stat b{display:block;font:700 32px/1.1 'Roboto Mono',monospace;margin-top:4px}
+label.l{display:block;font:500 14px Inter;margin:12px 0 4px}
+input[type=range]{width:100%;accent-color:var(--ac)}
+input[type=number]{width:90px;background:var(--s2);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font:500 14px 'Roboto Mono',monospace}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.bar{height:10px;border-radius:6px;background:var(--s2);overflow:hidden;border:1px solid var(--bd)}.bar i{display:block;height:100%;transition:width .4s}
+.tbl{width:100%;border-collapse:collapse}.tbl th,.tbl td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--bd);font-size:14px}
+.tbl th{color:var(--dim);font-weight:500;font-size:13px}.num{font-family:'Roboto Mono',monospace}
+.pill{display:inline-block;padding:2px 10px;border-radius:8px;font:600 12px Inter;border:1px solid}
+.hi{color:var(--err);border-color:var(--err);background:rgba(239,68,68,.1)}.md{color:var(--warn);border-color:var(--warn);background:rgba(245,158,11,.1)}.lo{color:var(--ok);border-color:var(--ok);background:rgba(34,197,94,.1)}
+.big{font:700 36px 'Roboto Mono',monospace}
+.scroll{overflow-x:auto}
+#msg{margin-top:10px;font-size:14px}.err{color:var(--err)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body><div class="wrap">
+<h1>Student Academic <span>Performance Prediction</span></h1>
+<p class="by">K. Deepak Kumar (44611089) · K.L.V. Subba Reddy (44611349) · K. Jagadish Sai (446011090) · M. Rohan (44611097)</p>
+<div class="tabs" role="tablist">
+<button class="tab" role="tab" aria-selected="true" data-p="p1">Data &amp; Model</button>
+<button class="tab" role="tab" aria-selected="false" data-p="p2">Predict</button>
+<button class="tab" role="tab" aria-selected="false" data-p="p3">At-Risk Students</button></div>
+
+<section class="panel on" id="p1">
+<div class="card"><h2>1. Load student data</h2>
+<p class="dim" style="margin-bottom:12px">Upload a CSV with numeric columns (e.g. attendance, internal_marks, study_hours) and a 0/1 target column named like <span class="num">at_risk</span> (or placed last). An optional text column (name / roll no.) is used as the label.</p>
+<button class="btn pri" id="demo">Use demo data (300 synthetic students)</button>
+<label class="btn" style="margin-left:6px">Upload CSV<input type="file" id="file" accept=".csv" hidden></label>
+<p id="msg" role="status"></p></div>
+<div id="results" hidden>
+<div class="card"><h2>2. Model performance <span class="dim">(held-out 20% test set)</span></h2>
+<div class="grid" id="stats"></div>
+<label class="l" for="thr">Decision threshold: <b class="num" id="thv">0.50</b> <span class="dim">— lower it to catch more at-risk students (higher recall)</span></label>
+<input type="range" id="thr" min="0.1" max="0.9" step="0.05" value="0.5"></div>
+<div class="grid g2"><div class="card"><h2>Confusion matrix</h2><div id="cm"></div></div>
+<div class="card"><h2>Factors driving risk</h2><div id="imp"></div></div></div></div></section>
+
+<section class="panel" id="p2"><div class="grid g2">
+<div class="card"><h2>Student details</h2><div id="inputs"><p class="dim">Load data on the first tab to enable predictions.</p></div></div>
+<div class="card"><h2>Predicted risk</h2><div class="big" id="pr">—</div><div style="margin:8px 0 12px"><span class="pill lo" id="pl">Waiting for data</span></div>
+<div class="bar"><i id="pb" style="width:0;background:var(--ok)"></i></div><h2 style="margin-top:18px">Why</h2><div id="why" class="dim">—</div></div></div></section>
+
+<section class="panel" id="p3"><div class="card"><h2>Highest-risk students</h2><div class="scroll"><table class="tbl"><thead><tr><th>Student</th><th>Risk score</th><th>Status</th><th>Main factor</th></tr></thead><tbody id="tb"><tr><td colspan="4" class="dim">Load data first.</td></tr></tbody></table></div></div></section>
+<p class="dim">Model: L2-regularised logistic regression trained in your browser; all metrics are computed on your data and nothing is uploaded anywhere. Predictions support, not replace, faculty judgement.</p>
+</div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let D=null,M=null;
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x==t));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==t.dataset.p))});
+// seeded RNG for reproducible demo + split
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R=rng(42),gauss=()=>Math.sqrt(-2*Math.log(1-R()))*Math.cos(6.2832*R()),cl=(v,a,b)=>Math.min(b,Math.max(a,v)),sig=z=>1/(1+Math.exp(-z));
+function demo(){const f=['attendance','internal_marks','study_hours','assignments_done','previous_gpa','backlogs'],rows=[],names=[];
+ for(let i=0;i<300;i++){const a=cl(75+15*gauss(),30,100),m=cl(60+18*gauss(),0,100),s=cl(12+5*gauss(),0,30),as=cl(Math.round(7+2.5*gauss()),0,10),g=cl(6.8+1.4*gauss(),2,10),b=cl(Math.round(1+1.3*gauss()),0,6);
+  const z=-.09*(a-75)-.07*(m-60)-.12*(s-12)-.25*(as-7)-.9*(g-6.8)+.6*(b-1)-.6+gauss();
+  rows.push({x:[a,m,s,as,g,b].map(v=>+v.toFixed(1)),y:R()<sig(z)?1:0});names.push('Student '+(i+1))}
+ return{f,rows,names}}
+function parse(t){const L=t.trim().split(/\r?\n/).map(l=>l.split(',').map(s=>s.trim()));if(L.length<31)throw'Need a header plus at least 30 student rows.';
+ const h=L.shift();let ti=h.findIndex(x=>/risk|target|label|fail/i.test(x));if(ti<0)ti=h.length-1;
+ const num=h.map((_,j)=>L.every(r=>r[j]!==''&&r[j]!==undefined&&isFinite(+r[j])));
+ if(!num[ti]||!L.every(r=>r[ti]=='0'||r[ti]=='1'))throw'Target column ("'+h[ti]+'") must contain only 0 or 1.';
+ const fi=h.map((_,j)=>j).filter(j=>j!=ti&&num[j]);if(!fi.length)throw'No numeric feature columns found.';
+ const ni=h.findIndex((_,j)=>!num[j]&&j!=ti);
+ return{f:fi.map(j=>h[j]),rows:L.map(r=>({x:fi.map(j=>+r[j]),y:+r[ti]})),names:L.map((r,i)=>ni>=0?r[ni]:'Row '+(i+1))}}
+function train(d){const n=d.rows.length,k=d.f.length,pos=[],neg=[];d.rows.forEach((r,i)=>(r.y?pos:neg).push(i));
+ if(pos.length<5||neg.length<5)throw'Both classes need at least 5 students.';
+ const sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+ const tp=Math.max(1,Math.round(pos.length*.2)),tn=Math.max(1,Math.round(neg.length*.2)),te=[...sh(pos).slice(0,tp),...sh(neg).slice(0,tn)],ts=new Set(te),tr=d.rows.map((_,i)=>i).filter(i=>!ts.has(i));
+ const mu=[],sd=[];for(let j=0;j<k;j++){const v=tr.map(i=>d.rows[i].x[j]),m=v.reduce((a,b)=>a+b)/v.length;mu.push(m);sd.push(Math.sqrt(v.reduce((a,b)=>a+(b-m)**2,0)/v.length)||1)}
+ const z=x=>x.map((v,j)=>(v-mu[j])/sd[j]),Z=tr.map(i=>z(d.rows[i].x)),Y=tr.map(i=>d.rows[i].y);
+ let w=Array(k).fill(0),b=0;for(let it=0;it<1500;it++){const gw=Array(k).fill(0);let gb=0;
+  Z.forEach((x,i)=>{const e=sig(b+x.reduce((a,v,j)=>a+v*w[j],0))-Y[i];gb+=e;x.forEach((v,j)=>gw[j]+=e*v)});
+  b-=.3*gb/Z.length;w=w.map((v,j)=>v-.3*(gw[j]/Z.length+.01*v))}
+ const m={w,b,mu,sd,f:d.f,z};m.p=x=>sig(b+z(x).reduce((a,v,j)=>a+v*w[j],0));
+ m.test=te.map(i=>({p:m.p(d.rows[i].x),y:d.rows[i].y}));return m}
+function metrics(t){let tp=0,fp=0,fn=0,tn=0;M.test.forEach(o=>{const p=o.p>=t?1:0;p&&o.y?tp++:p?fp++:o.y?fn++:tn++});
+ const P=tp/(tp+fp||1),Rc=tp/(tp+fn||1);return{tp,fp,fn,tn,acc:(tp+tn)/M.test.length,P,R:Rc,F:2*P*Rc/(P+Rc||1)}}
+function show(){const t=+$('#thr').value;$('#thv').textContent=t.toFixed(2);const m=metrics(t),pc=v=>(v*100).toFixed(1)+'%';
+ $('#stats').innerHTML=[['Accuracy',m.acc],['Precision',m.P],['Recall',m.R],['F1-score',m.F]].map(([a,v])=>`<div class="stat"><span class="dim">${a}</span><b>${pc(v)}</b></div>`).join('');
+ $('#cm').innerHTML=`<table class="tbl"><tr><th></th><th>Predicted at-risk</th><th>Predicted OK</th></tr><tr><th>Actually at-risk</th><td class="num">${m.tp} ✔ caught</td><td class="num">${m.fn} ✖ missed</td></tr><tr><th>Actually OK</th><td class="num">${m.fp} false alarm</td><td class="num">${m.tn} ✔</td></tr></table><p class="dim" style="margin-top:8px">${M.test.length} students in the test set.</p>`}
+function render(){$('#results').hidden=false;show();const mx=Math.max(...M.w.map(Math.abs));
+ $('#imp').innerHTML=M.f.map((f,j)=>({f,w:M.w[j]})).sort((a,b)=>Math.abs(b.w)-Math.abs(a.w)).map(o=>`<div style="margin-bottom:10px"><div class="row dim"><span style="color:var(--tx)">${esc(o.f.replace(/_/g,' '))}</span><span>${o.w>0?'▲ raises risk':'▼ lowers risk'}</span></div><div class="bar"><i style="width:${Math.abs(o.w)/mx*100}%;background:${o.w>0?'var(--err)':'var(--ac2)'}"></i></div></div>`).join('');
+ const st=D.f.map((_,j)=>{const v=D.rows.map(r=>r.x[j]);return{min:Math.min(...v),max:Math.max(...v),avg:v.reduce((a,b)=>a+b)/v.length}});
+ $('#inputs').innerHTML=D.f.map((f,j)=>{const s=st[j],step=(s.max-s.min)>20?1:.1;return`<label class="l" for="r${j}">${esc(f.replace(/_/g,' '))}</label><div class="row"><input type="range" id="r${j}" min="${s.min}" max="${s.max}" step="${step}" value="${s.avg.toFixed(1)}"><input type="number" id="n${j}" aria-label="${esc(f)}" min="${s.min}" max="${s.max}" step="${step}" value="${s.avg.toFixed(1)}"></div>`}).join('');
+ D.f.forEach((_,j)=>{const r=$('#r'+j),n=$('#n'+j);r.oninput=()=>{n.value=r.value;pred()};n.oninput=()=>{r.value=n.value;pred()}});pred();
+ const sc=D.rows.map((r,i)=>({i,p:M.p(r.x),c:M.z(r.x).map((v,j)=>v*M.w[j])})).sort((a,b)=>b.p-a.p).slice(0,15);
+ $('#tb').innerHTML=sc.map(o=>{const j=o.c.indexOf(Math.max(...o.c)),c=lab(o.p);return`<tr><td>${esc(D.names[o.i])}</td><td class="num">${(o.p*100).toFixed(1)}%</td><td><span class="pill ${c[1]}">${c[0]}</span></td><td>${esc(D.f[j].replace(/_/g,' '))}</td></tr>`}).join('')}
+const lab=p=>p>=.6?['▲ High risk','hi']:p>=.35?['◆ Moderate risk','md']:['● Low risk','lo'];
+function pred(){const x=D.f.map((_,j)=>+$('#n'+j).value),p=M.p(x),c=M.z(x).map((v,j)=>({f:D.f[j].replace(/_/g,' '),v:v*M.w[j]})).sort((a,b)=>b.v-a.v),l=lab(p);
+ $('#pr').textContent=(p*100).toFixed(1)+'%';$('#pl').textContent=l[0];$('#pl').className='pill '+l[1];$('#pb').style.width=p*100+'%';$('#pb').style.background=`var(--${l[1]=='hi'?'err':l[1]=='md'?'warn':'ok'})`;
+ const up=c.filter(o=>o.v>.05).slice(0,3),dn=c.filter(o=>o.v<-.05).slice(-3).reverse();
+ $('#why').innerHTML=`<p><b style="color:var(--tx)">Raising risk:</b> ${up.length?up.map(o=>esc(o.f)).join(', '):'none significant'}</p><p><b style="color:var(--tx)">Lowering risk:</b> ${dn.length?dn.map(o=>esc(o.f)).join(', '):'none significant'}</p>`}
+function go(fn){const b=$('#demo');b.disabled=true;$('#msg').className='';$('#msg').textContent='Training model…';setTimeout(()=>{try{D=fn();M=train(D);$('#msg').textContent=`Loaded ${D.rows.length} students, ${D.f.length} features (${D.rows.filter(r=>r.y).length} at-risk). Model trained.`;render()}catch(e){$('#msg').className='err';$('#msg').textContent='Error: '+e}b.disabled=false},30)}
+$('#demo').onclick=()=>{go(demo);$('#msg').textContent+=' '};
+$('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>go(()=>parse(r.result));r.readAsText(f)};
+$('#thr').oninput=()=>M&&show();
+</script></body></html>
